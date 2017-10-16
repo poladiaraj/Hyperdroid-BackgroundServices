@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     public static int minterval = 5000;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
