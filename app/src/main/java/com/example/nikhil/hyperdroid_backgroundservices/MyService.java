@@ -14,7 +14,7 @@ public class MyService extends Service {
 
     private Thread thread;
     private Handler mhandler=null;
-    private int minterval = 1000;
+    private int minterval = 60000;
 
     @Nullable
     @Override

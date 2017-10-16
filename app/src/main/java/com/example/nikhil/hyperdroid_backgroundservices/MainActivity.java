@@ -4,11 +4,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.text.format.Formatter;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -22,22 +30,46 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    // Authentication using Firebase;
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+
+    // Using Firebase Real Time Database
     public static FirebaseDatabase database;
     public static DatabaseReference mDatabase;
     public static Context ctx;
 
+    // Servive Start And End
     private Button startService;
     private Button stopService;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         ctx = getApplicationContext();
         database = FirebaseDatabase.getInstance();
         mDatabase = database.getReference();
+
+        mAuth = FirebaseAuth.getInstance();
+
+
+        mAuth.signInWithEmailAndPassword("admin@hyperdroid.com", "admin-service")
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        Log.d("Hyperdroid", "signInWithEmail:onComplete:" + task.isSuccessful());
+                        if (!task.isSuccessful()) {
+                            Log.w("Hyperdroid", "signInWithEmail:failed", task.getException());
+                            Toast.makeText(MainActivity.this, "auth_failed",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
+
+
         startService = (Button) findViewById(R.id.startService);
         stopService = (Button) findViewById(R.id.stopService);
         // Updating the time on firebase to Address the problem of Status.
