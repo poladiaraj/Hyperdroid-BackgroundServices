@@ -14,7 +14,7 @@ public class MyService extends Service {
 
     private Thread thread;
     private Handler mhandler=null;
-    private int minterval = 60000;
+
 
     @Nullable
     @Override
@@ -43,7 +43,7 @@ public class MyService extends Service {
         @Override
         public void run() {
             repeatingTask(); //this function can change value of m_interval.
-            mhandler.postDelayed(m_statusChecker, minterval);
+            mhandler.postDelayed(m_statusChecker, MainActivity.minterval);
         }
     };
     public void startRepeatingTask()

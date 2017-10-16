@@ -29,8 +29,6 @@ public class InitialSetup extends AppCompatActivity {
 
         sharedPreferences = this.getSharedPreferences("com.example.nikhil.backgroundservicevm", Context.MODE_PRIVATE);
 
-
-
         final String s = sharedPreferences.getString("name@VM" , null);
         if( s != null )
         {

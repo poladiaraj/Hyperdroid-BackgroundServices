@@ -17,8 +17,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -43,6 +46,10 @@ public class MainActivity extends AppCompatActivity {
     private Button startService;
     private Button stopService;
 
+    // Refress interval
+    public static int minterval = 5000;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,16 +66,38 @@ public class MainActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d("Hyperdroid", "signInWithEmail:onComplete:" + task.isSuccessful());
+                        //Log.d("Hyperdroid", "signInWithEmail:onComplete:" + task.isSuccessful());
                         if (!task.isSuccessful()) {
-                            Log.w("Hyperdroid", "signInWithEmail:failed", task.getException());
+                            //Log.w("Hyperdroid", "signInWithEmail:failed", task.getException());
                             Toast.makeText(MainActivity.this, "auth_failed",
                                     Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
 
+        mDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                // This method is called once with the initial value and again
+                // whenever data at this location is updated.
+                String value = dataSnapshot.child("VirtualMachine").child("Ref_Interval").getValue().toString();
+                //Log.d("Hyperdroid-Ref_Interval", "Value is: " + value);
+                try
+                {
+                    minterval = Integer.parseInt(value);
+                }
+                catch (Exception E)
+                {
+                    minterval = 1000;
+                }
+            }
 
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
+                //Log.w("Hyperdroid-Ref_Interval", "Failed to read value.", error.toException());
+            }
+        });
 
         startService = (Button) findViewById(R.id.startService);
         stopService = (Button) findViewById(R.id.stopService);
