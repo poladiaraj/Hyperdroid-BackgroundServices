@@ -2,6 +2,7 @@ package com.example.nikhil.hyperdroid_backgroundservices;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -127,12 +128,16 @@ public class MainActivity extends AppCompatActivity {
     {
         HashMap<String,String> map = new HashMap<>();
         WifiManager wm = (WifiManager)  ctx.getSystemService(WIFI_SERVICE);
+        WifiInfo wifiInfo = wm.getConnectionInfo();
         String ip = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());
+        String ssid = wifiInfo.getSSID();
         map.put("Address" , getIPAddress(true));
         map.put("Port" , "5901");
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
         String currentDateandTime = sdf.format(new Date());
         map.put("Data&Time" , currentDateandTime);
+        map.put("SSID" , ssid );
+        //Log.i("#Hyperdroid" , ssid);
         mDatabase.child("VirtualMachine").child(InitialSetup.VMName).setValue(map);
     }
 
